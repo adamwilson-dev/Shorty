@@ -33,6 +33,11 @@ class User extends Authenticatable
     ];
 
     /**
+     * @var mixed
+     */
+    private $role;
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -43,5 +48,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Returns whether the current user is an admin or not
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }

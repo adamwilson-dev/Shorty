@@ -35,5 +35,16 @@ services:
       # Volumes can be purged via Docker Desktop
       - dbdata:/var/lib/mysql
 
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin_server
+      environment:
+          PMA_HOST: db
+          MYSQL_ROOT_PASSWORD: root
+      ports:
+          - "8080:80"
+      depends_on:
+          - db
+
 volumes:
   dbdata:
