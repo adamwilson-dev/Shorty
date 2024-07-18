@@ -28,9 +28,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application directory contents
-COPY ../ /var/www/html
-
 # Copy Apache configuration file
 COPY apache-ssl-config.conf /etc/apache2/sites-available/000-default.conf
 
