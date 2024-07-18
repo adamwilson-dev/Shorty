@@ -9,6 +9,8 @@ services:
     ports:
       - "801:80"
       - "4431:443"
+      # Vite
+      - "3000:3000"
     volumes:
       - ../:/var/www/html
     # Set Laravel folder permissions

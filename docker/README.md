@@ -21,6 +21,11 @@ $ docker exec -it php83_apache_server composer install
 ```
 $ docker exec -it php83_apache_server php artisan migrate
 ```
+- Install NPM and run Vite:
+```
+$ docker exec -it php83_apache_server npm install
+$ docker exec -it php83_apache_server  npm run dev
+```
 - Access the application via a web browser on "https://localhost:4431/" (accept any certificate warnings in the browser)
 
 ### Database
