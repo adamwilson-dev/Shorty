@@ -1,12 +1,14 @@
-version: '3'
+name: shorty
+
 services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
+    container_name: php83_apache_server
     ports:
-      - "80:80"
-      - "443:443"
+      - "801:80"
+      - "4431:443"
     volumes:
       - ../:/var/www/html
     depends_on:
@@ -19,6 +21,7 @@ services:
 
   db:
     image: mysql:8.0
+    container_name: mysql_server
     ports:
       - "3306:3306"
     environment:

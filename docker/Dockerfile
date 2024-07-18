@@ -38,7 +38,8 @@ COPY apache-ssl-config.conf /etc/apache2/sites-available/000-default.conf
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com"
 
 # Install dependencies
-RUN composer install
+# @todo - re-enable once composer has been added
+#RUN composer install
 
 # Change ownership of our applications
 RUN chown -R www-data:www-data /var/www/html
