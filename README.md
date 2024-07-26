@@ -18,6 +18,11 @@ See the Docker [README](./docker/README.md) for guidance on creating a local ins
 
 Remember that if you're using Docker, precede the commands with "docker exec -it php83_apache_server".
 
+Create database migration file:
+```
+php artisan make:migration create_urls_table --create=urls
+```
+
 Apply database changes:
 ```
 $ php artisan migrate

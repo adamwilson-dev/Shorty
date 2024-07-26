@@ -1,9 +1,10 @@
 {
-    "name": "laravel/laravel",
+    "name": "adamwilson-dev/shorty",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Simple Short URL application written with Laravel 11",
+    "keywords": ["shorty", "shorturl", "tinylink", "smallurl", "laravel", "docker", "mysql", "php8"],
     "license": "MIT",
+    "version": "0.1.0",
     "require": {
         "php": "^8.2",
         "laravel/framework": "^11.9",

@@ -7,6 +7,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Ajax routes
+Route::group(['namespace' => 'App\Http\Controllers\Ajax', 'prefix' => 'ajax'], function () {
+    Route::post('/url/create', 'UrlController@create')->name('ajax.url.create');
+});
+
+
 Route::post('/shorten', [UrlShortenerController::class, 'shorten'])->name('shorten.url');
 
 Route::get('/dashboard', function () {
