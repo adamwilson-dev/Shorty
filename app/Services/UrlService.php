@@ -4,9 +4,8 @@ namespace App\Services;
 
 use App\Models\Url;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
-class UrlService extends Model
+class UrlService
 {
     /**
      * Creates the short URL entry in the database
@@ -55,13 +54,13 @@ class UrlService extends Model
      * @param string|null $lastShortUrl
      * @return string
      */
-    private function generateShortestUrl(?string $lastShortUrl): string
+    public function generateShortestUrl(?string $lastShortUrl): string
     {
         // Define the character set: lowercase & uppercase letters followed by digits
-        $chars = range('a', 'z') + range('A', 'Z') + range('0', '9');
+        $chars = array_merge(range('a', 'z'), range('A', 'Z'), range('0', '9'));
 
         // If no previous identifier is provided, start with 'a'
-        if (empty($lastShortUrl)) {
+        if ($lastShortUrl === '' || $lastShortUrl === null) {
             return $chars[0];
         }
 
@@ -70,7 +69,7 @@ class UrlService extends Model
         $prefix = substr($lastShortUrl, 0, -1);
 
         // Find the position of the last character in our character set
-        $pos = array_search($lastChar, $chars, true);
+        $pos = $this->caseSensitiveArraySearch($lastChar, $chars);
 
         // If the last character is not in our set, start over from 'a'
         if ($pos === false) {
@@ -86,6 +85,17 @@ class UrlService extends Model
 
         // If we're at the end of the set, increment the prefix and append 'a'
         $newPrefix = $this->generateShortestUrl($prefix);
+
         return $newPrefix . $chars[0];
+    }
+
+    function caseSensitiveArraySearch($needle, array $haystack) {
+        foreach ($haystack as $key => $item) {
+            if ($item === $needle) {
+                return $key;
+            }
+        }
+
+        return false;
     }
 }

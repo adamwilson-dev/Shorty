@@ -20,7 +20,7 @@ Remember that if you're using Docker, precede the commands with "docker exec -it
 
 Create database migration file:
 ```
-php artisan make:migration create_urls_table --create=urls
+$ php artisan make:migration create_urls_table --create=urls
 ```
 
 Apply database changes:
@@ -38,6 +38,10 @@ Build NPM for production:
 $ npm install && npm run build
 ```
 
+Run Unit Tests:
+```
+$ php artisan test
+```
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE.md) file for details.
