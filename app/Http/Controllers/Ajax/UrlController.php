@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
 use App\Services\UrlService;
+use App\Services\UtilityService;
 use Illuminate\Http\Request;
 use App\Models\Url;
 use Carbon\Carbon;
@@ -14,14 +15,21 @@ class UrlController extends Controller
     /**
      * @var UrlService
      */
-    protected $urlService;
+    protected UrlService $urlService;
+
+    /**
+     * @var UtilityService
+     */
+    private UtilityService $utilityService;
 
     /**
      * @param UrlService $urlService
+     * @param UtilityService $utilityService
      */
-    public function __construct(UrlService $urlService)
+    public function __construct(UrlService $urlService, UtilityService $utilityService)
     {
         $this->urlService = $urlService;
+        $this->utilityService = $utilityService;
     }
 
     public function create(Request $request)
@@ -43,7 +51,7 @@ class UrlController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Short URL created successfully',
-                'short_url' => $url->getFullShortUrl(),
+                'short_url' => $url->getFullShortUrl($this->utilityService),
             ]);
         } catch (ValidationException $e) {
             if ($request->ajax()) {

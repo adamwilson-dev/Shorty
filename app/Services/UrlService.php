@@ -35,7 +35,7 @@ class UrlService
      */
     private function generateShortUrl(): string
     {
-        // Generate shortest URL, this is nested like this to support other URL formats later
+        // Generate the shortest URL, this is nested like this to support other URL formats later
         return $this->generateShortestUrl($this->getLastShortUrl());
     }
 
@@ -97,5 +97,11 @@ class UrlService
         }
 
         return false;
+    }
+
+    function getUrlByPath(string $shortUrl): ?Url
+    {
+        return Url::where('short_url', $shortUrl)
+            ->first();
     }
 }

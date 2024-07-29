@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('urls', function (Blueprint $table) {
             $table->id();
-            $table->string('short_url', 255)->unique(); // Maximum length of 255 characters and unique
+            $table->string('short_url', 255)->collation('utf8mb4_bin')->unique(); // Maximum length of 255 characters and unique
             $table->string('long_url', 2048); // Maximum length of 2048 characters
             $table->unsignedBigInteger('user_id')->nullable(); // Nullable user_id field
             $table->integer('total_visits')->default(0); // Default value of 0

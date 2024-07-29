@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Request;
+use App\Services\UtilityService;
 
 class Url extends Model
 {
@@ -20,7 +20,7 @@ class Url extends Model
         'status',
     ];
 
-    public function getFullShortUrl() {
-        return Request::getScheme() . '://' . Request::getHost() . '/' . $this->short_url;
+    public function getFullShortUrl(UtilityService $utilityService) {
+        return $utilityService->getHost() . '/' . $this->short_url;
     }
 }
