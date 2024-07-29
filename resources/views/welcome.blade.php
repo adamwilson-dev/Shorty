@@ -13,6 +13,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" href="{{ asset('styles/custom.css') }}">
 
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     </head>
@@ -56,6 +57,29 @@
                     </header>
 
                     <main class="mt-6">
+                        <div id="short-url-result" class="container max-w-4xl mx-auto hidden opacity-0 transition-opacity duration-500 ease-in-out">
+                            <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="flex flex-col">
+                                            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-gray-900">
+                                                <svg class="h-5 w-5 flex-none text-indigo-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd" />
+                                                </svg>
+                                                <span id="short-url-success-title"></span>
+                                            </dt>
+                                            <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                                                <p id="short-url-container" class="flex-auto"></p>
+                                            </dd>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/> <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <form id="create-short-url-form" action="{{ route("ajax.url.create") }}" method="POST" class="max-w-4xl mx-auto">
                             @csrf
                             <div class="relative">
@@ -82,10 +106,23 @@
                                     </a>
                                     <input id="expiry-date" name="expiry-date" type="hidden"/>
                                     <button
+                                        id="create-short-url-button"
                                         type="submit"
                                         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Create Short URL
+                                    </button>
+                                    <button
+                                        id="create-short-url-processing-button"
+                                        type="button"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed hidden"
+                                        disabled
+                                    >
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Creating...
                                     </button>
                                 </div>
                             </div>
@@ -121,6 +158,9 @@
                                     // Disable form elements
                                     setFormDisabled();
 
+                                    // Clear any previous results
+                                    resetPreviousResults();
+
                                     // Submit the form via ajax
                                     $.ajax({
                                         url: $(this).attr('action'),
@@ -131,8 +171,8 @@
                                             // Re-enable the form
                                             setFormEnabled();
 
-                                            // Assuming the response is a JSON object
-                                            console.log(response);
+                                            // Show the result
+                                            showShortUrlResult(response);
                                         },
                                         error: function(xhr, status, error) {
                                             // Re-enable the form
@@ -146,12 +186,14 @@
 
                             function setFormDisabled() {
                                 $('#long-url').attr('readonly', true);
-                                $('#create-short-url-form').find('button').attr('disabled', true);
+                                $('#create-short-url-button').addClass('hidden');
+                                $('#create-short-url-processing-button').removeClass('hidden');
                             }
 
                             function setFormEnabled() {
                                 $('#long-url').attr('readonly', false);
-                                $('#create-short-url-form').find('button').attr('disabled', false);
+                                $('#create-short-url-processing-button').addClass('hidden');
+                                $('#create-short-url-button').removeClass('hidden');
                             }
 
                             function autoResize() {
@@ -205,10 +247,42 @@
 
                             function setupClearDateIcon() {
                                 $('#clear-date-icon').on('click', function() {
-                                    $('#expiry-date').val('');
-                                    $('#selected-date').html('');
-                                    $('#clear-date-icon').addClass('hidden');
+                                    clearDateSelection();
                                 });
+                            }
+
+                            function clearDateSelection() {
+                                $('#expiry-date').val('');
+                                $('#selected-date').html('');
+                                $('#clear-date-icon').addClass('hidden');
+                            }
+
+                            function showShortUrlResult(result) {
+                                $('#short-url-success-title').html(result.message);
+                                $('#short-url-container').html(result.short_url);
+                                $('#short-url-result').removeClass('hidden')
+                                    .removeClass('-translate-y-4')
+                                    .addClass('translate-y-0')
+                                    .delay(50)  // Small delay to ensure the transition happens
+                                    .queue(function(next) {
+                                        $(this).removeClass('opacity-0').addClass('opacity-100');
+                                        next();
+                                    });
+
+                                resetLongUrlForm();
+                            }
+
+                            function resetLongUrlForm() {
+                                $('#long-url').val('');
+                                clearDateSelection();
+                            }
+
+                            function resetPreviousResults() {
+                                $('#short-url-result').addClass('hidden')
+                                    .removeClass('-translate-y-0')
+                                    .addClass('translate-y-4')
+                                    .removeClass('opacity-100')
+                                    .addClass('opacity-0');
                             }
                         </script>
                     </main>
